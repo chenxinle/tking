@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.me.tking.dao.ActivityInfoDao">
+    <insert id="batchInsertActivityInfo" parameterType="java.util.List">
+        insert into ActivityInfo
+        (scanTimes, likeTimes, activityName)
+        values
+        <foreach item="activityInfo" collection="activityInfos" separator=",">
+            (
+            #{activityInfo.scanTimes},
+            #{activityInfo.likeTimes},
+            #{activityInfo.activityName}
+            )
+        </foreach>
+    </insert>
+    <select id="getAll" resultType="com.me.tking.entity.ActivityInfo">
+        <include refid="base"></include>
+        <include refid="condition"></include>
+    </select>
+    <select id="countAll" resultType="int">
+        <include refid="count"></include>
+        <include refid="condition"></include>
+    </select>
+    <sql id="condition">
+        <if test="keyword != ''">
+            where a.activityName like "%"#{keyword}"%"
+        </if>
+        <if test="orderByType == 1">
+            order by a.scanTimes desc
+        </if>
+        <if test="orderByType == 2">
+            order by a.scanTimes asc
+        </if>
+        <if test="orderByType == 3">
+            order by a.likeTimes desc
+        </if>
+        <if test="orderByType == 4">
+            order by a.likeTimes asc
+        </if>
+    </sql>
+    <sql id="base">
+        select a.scanTimes, a.likeTimes, a.activityName from ActivityInfo a
+    </sql>
+    <sql id="count">
+        select count(1) from ActivityInfo a
+    </sql>
+</mapper>
